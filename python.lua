@@ -20,24 +20,8 @@ return {
 		dependencies = {
 			{
 				"mfussenegger/nvim-dap-python",
-            -- stylua: ignore
-            keys = {
-              { "<leader>dPt", function() require('dap-python').test_method() end, desc = "Debug Method" },
-              { "<leader>dPc", function() require('dap-python').test_class() end, desc = "Debug Class" },
-            },
 				config = function()
-					local path = require("mason-registry").get_package("debugpy"):get_install_path()
-					require("dap-python").setup(".venv/bin/python")
-					table.insert(require("dap").configurations.python, {
-						type = "python",
-						django = true,
-						python = "./.venv/bin/python",
-						request = "launch",
-						name = "Django",
-						program = "./manage.py",
-						args = { "runserver" },
-						-- ... more options, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
-					})
+					require("dap-python").setup("~/.local/share/nvim/mason/packages/debugpy/venv/bin/python")
 				end,
 			},
 
@@ -76,46 +60,6 @@ return {
 					defaults = {
 						["<leader>d"] = { name = "+debug" },
 						["<leader>da"] = { name = "+adapters" },
-					},
-				},
-			},
-
-			-- mason.nvim integration
-			{
-				"jay-babu/mason-nvim-dap.nvim",
-				dependencies = "mason.nvim",
-				cmd = { "DapInstall", "DapUninstall" },
-				opts = {
-					-- Makes a best effort to setup the various debuggers with
-					-- reasonable debug configurations
-					automatic_installation = true,
-
-					-- You can provide additional configuration to the handlers,
-					-- see mason-nvim-dap README for more information
-					handlers = {
-						function(config)
-							-- all sources with no handler get passed here
-
-							-- Keep original functionality
-							require("mason-nvim-dap").default_setup(config)
-						end,
-						python = function(config)
-							config.adapters = {
-								type = "executable",
-								command = "/usr/bin/python3",
-								args = {
-									"-m",
-									"debugpy.adapter",
-								},
-							}
-							require("mason-nvim-dap").default_setup(config) -- don't forget this!
-						end,
-					},
-
-					-- You'll need to check that you have the required things installed
-					-- online, please don't ask me how to install them :)
-					ensure_installed = {
-						-- Update this to ensure that you have the debuggers for the langs you want
 					},
 				},
 			},
